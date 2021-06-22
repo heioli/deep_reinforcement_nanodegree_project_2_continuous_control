@@ -131,3 +131,5 @@ dmypy.json
 # Ignore Reacher Environment Files
 Reacher_Linux
 Reacher_Linux.zip
+Reacher_Linux_NoVis
+Reacher_Linux_NoVis.zip
