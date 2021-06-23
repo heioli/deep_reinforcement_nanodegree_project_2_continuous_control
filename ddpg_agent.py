@@ -9,13 +9,22 @@ import torch
 import torch.nn.functional as F
 import torch.optim as optim
 
+# General Parameters
 BUFFER_SIZE = int(1e6)  # replay buffer size
-BATCH_SIZE = 1024        # minibatch size
+BATCH_SIZE = 256# 1024        # minibatch size
 GAMMA = 0.99            # discount factor
 TAU = 1e-3              # for soft update of target parameters
-LR_ACTOR = 1.5e-3        # learning rate of the actor 
+LR_ACTOR = 1.5e-4        # learning rate of the actor 
 LR_CRITIC = 1e-3        # learning rate of the critic
 WEIGHT_DECAY = 0        # L2 weight decay
+
+# Parameters for step_multi update: Every T_UPDATE, update the network N_UPDATE times
+T_UPDATE = 20
+N_UPDATE = 10
+
+# Parameters for Epsilon Decay --> reduce noise over time
+EPS = 1
+EPS_DECAY = 0.9999
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -47,6 +56,7 @@ class Agent():
 
         # Noise process
         self.noise = OUNoise(action_size, random_seed)
+        self.eps = EPS # current discounted epsilon
 
         # Replay memory
         self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, random_seed)
@@ -73,8 +83,8 @@ class Agent():
         self.memory.add(state, action, reward, next_state, done)
 
         # Learn, if enough samples are available in memory
-        if len(self.memory) > BATCH_SIZE and timestep % 20 == 0:
-            for i in range(10):
+        if len(self.memory) > BATCH_SIZE and timestep % T_UPDATE == 0:
+            for i in range(N_UPDATE):
                 experiences = self.memory.sample()
                 self.learn(experiences, GAMMA)
 
@@ -96,7 +106,7 @@ class Agent():
             action = self.actor_local(state).cpu().data.numpy()
         self.actor_local.train()
         if add_noise:
-            action += self.noise.sample()
+            action += self.noise.sample() * self.eps # discounted noise
         return np.clip(action, -1, 1)
 
     def reset(self):
@@ -142,7 +152,9 @@ class Agent():
 
         # ----------------------- update target networks ----------------------- #
         self.soft_update(self.critic_local, self.critic_target, TAU)
-        self.soft_update(self.actor_local, self.actor_target, TAU)                     
+        self.soft_update(self.actor_local, self.actor_target, TAU) 
+
+        self.eps *= EPS_DECAY                    
 
     def soft_update(self, local_model, target_model, tau):
         """Soft update model parameters.
