@@ -82,7 +82,7 @@ class Agent():
         # Save experience / reward
         self.memory.add(state, action, reward, next_state, done)
 
-        # Learn, if enough samples are available in memory
+        # Learn, if enough samples are available in memory. Only update ever T_UPDATE timestep
         if len(self.memory) > BATCH_SIZE and timestep % T_UPDATE == 0:
             for i in range(N_UPDATE):
                 experiences = self.memory.sample()
@@ -106,7 +106,7 @@ class Agent():
             action = self.actor_local(state).cpu().data.numpy()
         self.actor_local.train()
         if add_noise:
-            action += self.noise.sample() * self.eps # discounted noise
+            action += self.noise.sample()*self.eps # discount noise by factor eps
         return np.clip(action, -1, 1)
 
     def reset(self):
@@ -154,7 +154,7 @@ class Agent():
         self.soft_update(self.critic_local, self.critic_target, TAU)
         self.soft_update(self.actor_local, self.actor_target, TAU) 
 
-        self.eps *= EPS_DECAY                    
+        self.eps *= EPS_DECAY # Adjust eps                    
 
     def soft_update(self, local_model, target_model, tau):
         """Soft update model parameters.
