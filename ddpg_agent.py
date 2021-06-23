@@ -13,7 +13,7 @@ BUFFER_SIZE = int(1e6)  # replay buffer size
 BATCH_SIZE = 1024        # minibatch size
 GAMMA = 0.99            # discount factor
 TAU = 1e-3              # for soft update of target parameters
-LR_ACTOR = 2e-3        # learning rate of the actor 
+LR_ACTOR = 1.5e-3        # learning rate of the actor 
 LR_CRITIC = 1e-3        # learning rate of the critic
 WEIGHT_DECAY = 0        # L2 weight decay
 
@@ -63,6 +63,20 @@ class Agent():
         if len(self.memory) > BATCH_SIZE:
             experiences = self.memory.sample()
             self.learn(experiences, GAMMA)
+
+    def step_multi(self, state, action, reward, next_state, done, timestep):
+        """
+        Save experience in replay memory, and use random sample from buffer to learn.
+        Step version only to be used for single agent versions
+        """
+        # Save experience / reward
+        self.memory.add(state, action, reward, next_state, done)
+
+        # Learn, if enough samples are available in memory
+        if len(self.memory) > BATCH_SIZE and timestep % 20 == 0:
+            for i in range(10):
+                experiences = self.memory.sample()
+                self.learn(experiences, GAMMA)
 
     def add_to_memory(self, state, action, reward, next_state, done):
         """Add experience / reward to shared memory """
