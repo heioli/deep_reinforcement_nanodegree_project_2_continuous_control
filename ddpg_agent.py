@@ -11,10 +11,10 @@ import torch.optim as optim
 
 # General Parameters
 BUFFER_SIZE = int(1e6)  # replay buffer size
-BATCH_SIZE = 256# 1024        # minibatch size
+BATCH_SIZE = 256        # minibatch size
 GAMMA = 0.99            # discount factor
 TAU = 1e-3              # for soft update of target parameters
-LR_ACTOR = 1.5e-4        # learning rate of the actor 
+LR_ACTOR = 1.5e-4       # learning rate of the actor 
 LR_CRITIC = 1e-3        # learning rate of the critic
 WEIGHT_DECAY = 0        # L2 weight decay
 
@@ -23,8 +23,8 @@ T_UPDATE = 20
 N_UPDATE = 10
 
 # Parameters for Epsilon Decay --> reduce noise over time
-EPS = 1
-EPS_DECAY = 0.9999
+EPS = 1                 # Initial epsilon
+EPS_DECAY = 0.9999      # Decay factor
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -64,7 +64,7 @@ class Agent():
     def step(self, state, action, reward, next_state, done):
         """
         Save experience in replay memory, and use random sample from buffer to learn.
-        Step version only to be used for single agent versions
+        Step version only to be used for single agent versions where update at every timestep is wished
         """
         # Save experience / reward
         self.memory.add(state, action, reward, next_state, done)
@@ -83,17 +83,17 @@ class Agent():
         self.memory.add(state, action, reward, next_state, done)
 
         # Learn, if enough samples are available in memory. Only update ever T_UPDATE timestep
-        if len(self.memory) > BATCH_SIZE and timestep % T_UPDATE == 0:
+        if (len(self.memory) > BATCH_SIZE) and (timestep % T_UPDATE == 0):
             for i in range(N_UPDATE):
                 experiences = self.memory.sample()
                 self.learn(experiences, GAMMA)
 
     def add_to_memory(self, state, action, reward, next_state, done):
-        """Add experience / reward to shared memory """
+        """Individual add-to-replay-buffer function: Add experience / reward to shared memory"""
         self.memory.add(state, action, reward, next_state, done)
 
     def multi_agent_step(self):
-        """Perform learn - if enough samples are available in memory"""
+        """Individual update function: Perform learn - if enough samples are available in memory"""
         if len(self.memory) > BATCH_SIZE:
             experiences = self.memory.sample()
             self.learn(experiences, GAMMA)

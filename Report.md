@@ -41,9 +41,17 @@ Criterion for solving the environment: Agents must get an average score of +30 (
 >- After each episode, we add up the rewards that each agent received (without discounting), to get a score for each agent. This yields 20 (potentially different) scores. We then take the average of these 20 scores.
 >- This yields an average score for each episode (where the average is over all 20 agents).
 
-This environment has been resolved in: **XXX episodes**. The following plot shows the averaged rewards (20 agents) obtained during the training.
+This environment has been resolved in: **109 episodes**. The following plot shows the averaged rewards (20 agents) obtained during the training. 
+
+
 
 ![Rewards Plot](Plots/Average_scores.png)
+
+Results run in Udacity GPU environment can be found in : 
+- Main file with run results: *'Continuous_Controls_v2_trained.ipynb'*. 
+- *.pth contain stored checkpoint finiles. Checkpoint_actor_final.pth and checkpoint_critic_final.pth contain final version of neural network weights.
+- ddpg_agent.py and model.py contain the adapted agent and model code.
+- workspace_utils.py provides the active_session function to allow long training on the Udacity GPU workspace (provided by Udacity support).
 
 ## Ideas for future work
 - Alternative neural network architectures for agent and critic
