@@ -44,7 +44,13 @@ The following criteria apply to allow an environment to be successfully solved:
 
 The environment is considered solved, when the average (over 100 episodes) of those average scores is at least +30. 
 
-### Getting Started - The Environments
+### Getting Started 
+
+#### Dependencies
+
+To run the code, the *udacity deep reinforcement learning* environment is required to be present on your machine. Prerequisite is a local Anaconda installation. To build the **drlnd** environment from scratch please follow the instructions at: [Install drlnd environment](https://github.com/udacity/deep-reinforcement-learning/blob/master/README.md#dependencies).
+
+#### The Environments
 
 1. Download the environment from one of the links below.  You need only select the environment that matches your operating system:
 
@@ -66,7 +72,7 @@ The environment is considered solved, when the average (over 100 episodes) of th
 
 2. Place the file in the DRLND GitHub repository, in the `p2_continuous-control/` folder, and unzip (or decompress) the file. 
 
-### Instructions
+### Instructions - Run the algorithm
 
 Follow the instructions in `Continuous_Control_v2.ipynb` to reperform the training. Training works best in a GPU environment (takes several hours).
 
